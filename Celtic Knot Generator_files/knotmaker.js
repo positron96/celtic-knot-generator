@@ -15,8 +15,8 @@ var KnotMaker = (function($) {
 		columns : 12,
 
 		//Cosmetic settings
-		cellSize : 30,
-		stringSize : 12,
+		cellSize : 53,
+		stringSize : 22,
 		strokeWidth : 2,
 		stringColor : "#FF9A39",
 		strokeColor : "#000000",
@@ -24,7 +24,7 @@ var KnotMaker = (function($) {
 
 		//Pattern editor UI colors
 		gridColor: "rgb(180, 180, 180)",
-		cutColor: "rgb(180, 180, 180)",
+		cutColor: "red",//"rgb(180, 180, 180)",
 		newCutColor: "rgb(0, 255, 0)",
 		controlNodeColor1: "#6dcff6",
 		controlNodeColor2: "#f66d6d",
@@ -59,6 +59,7 @@ var KnotMaker = (function($) {
 	var NO_CUT = 0;
 	var HORIZ_CUT = 1;
 	var VERT_CUT = 2;
+	function cutToStr(cut) { return cut==NO_CUT?'-':cut==HORIZ_CUT?'H':'V';}
 
 	var cuts = [];
 
@@ -784,8 +785,8 @@ var KnotMaker = (function($) {
 		var canvasHeight = outputOffset.y + rows * settings.cellSize + 15;
 		
 		//Don't make it smaller than the initial 600x500 dimensions.
-		canvasWidth = Math.max(canvasWidth, 600);
-		canvasHeight = Math.max(canvasHeight, 500);
+		canvasWidth = Math.max(canvasWidth, 900);
+		canvasHeight = Math.max(canvasHeight, 900);
 		
 		canvas.attr('width', canvasWidth);
 		canvas.attr('height', canvasHeight);
