@@ -5,9 +5,9 @@
  */
 
 $(document).ready(function() {
-    var canvas = document.getElementById("myCanvas");
+	var svg = document.getElementById("mySVG");
 
-	KnotMaker.init(canvas);
+	KnotMaker.init(svg);
 	KnotMaker.setKnotworkSize(10, 10);
 
 	$('#reset-pattern').click(function(){
@@ -135,6 +135,19 @@ $(document).ready(function() {
 		}
 	});
 
+	function saveSvg(svg_data) {
+		svg_data = svg_data.innerHTML;
+
+        var head = '<svg title="graph" version="1.1" xmlns="http://www.w3.org/2000/svg">'
+
+        var style = '';//'<style>circle {cursor: pointer;stroke-width: 1.5px;}text {font: 10px arial;}path {stroke: DimGrey;stroke-width: 1.5px;}</style>'
+
+        var full_svg = head +  style + svg_data + "</svg>"
+        var blob = new Blob([full_svg], {type: "image/svg+xml"});  
+        saveAs(blob, "image.svg");
+
+	};
+
 	$('#download-image').click(function() {
 		var button = $(this);
 		button.val('Processing...');
@@ -142,29 +155,7 @@ $(document).ready(function() {
 		var showUi = $('#show-ui').is(':checked');
 		KnotMaker.showUi(false);
 
-		var imageDimensions = KnotMaker.getImageDimensions();
-
-		jQuery.post(
-			'getimage.php',
-			{
-				image: canvas.toDataURL(),
-				x: imageDimensions.x,
-				y: imageDimensions.y,
-				width: imageDimensions.width,
-				height: imageDimensions.height
-			},
-			function(data) {
-				button.val('Download PNG');
-
-				var validResponse = /^[a-z0-9]+\.png$/i;
-				if (validResponse.test(data)) {
-					document.location = 'getimage.php?file=' + data;
-				} else {
-					console.log(data);
-					alert("Oops, something went wrong with the download!")
-				}
-			}
-		);
+		saveSvg(document.getElementById("mySVG"));		
 
 		KnotMaker.showUi(showUi);
 	});
