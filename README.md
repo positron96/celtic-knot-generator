@@ -1,9 +1,9 @@
 # celtic-knot-generator
 
 This project is a fork of [Celtic Knot Genertor](https://w-shadow.com/celtic-knots/) written by by Janis Elsts in 2012-2018 
-(Description: https://w-shadow.com/blog/2012/05/17/celtic-knot-generator-canvas/).
+([description](https://w-shadow.com/blog/2012/05/17/celtic-knot-generator-canvas/)).
 
-It replaces PNG output with SVG output (and HTML5 canvas with SVG) so that it can be used for CNC machining.
+It replaces PNG output with SVG output (and HTML5 canvas with SVG element) so that it can be used for CNC machining.
 
 More features may be added in future (gradients, area restrictions).
 
