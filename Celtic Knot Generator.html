@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)https://w-shadow.com/celtic-knots/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Celtic Knot Generator in HTML5 / Canvas</title>
+	
+
+	<link rel="stylesheet" href="./Celtic Knot Generator_files/style.css">
+	<link rel="stylesheet" href="./Celtic Knot Generator_files/jquery.miniColors.css">
+
+	<script src="./Celtic Knot Generator_files/jquery.min.js.download"></script>
+	<script src="./Celtic Knot Generator_files/jquery.miniColors.min.js.download"></script>
+	<script src="./Celtic Knot Generator_files/base64.js.download"></script>
+	<script src="./Celtic Knot Generator_files/canvas2image.js.download"></script>
+
+	<script src="./Celtic Knot Generator_files/knotmaker.js.download"></script>
+	<script src="./Celtic Knot Generator_files/app.js.download"></script>
+</head>
+  
+<body>
+	<div id="wrapper">
+		<div id="header">
+			<h1>Celtic Knot Generator</h1>
+		</div>
+
+		<div id="editor-controls">
+			<fieldset id="tools">
+				<legend>Tools</legend>
+
+				<input type="button" id="reset-pattern" value="Reset pattern">
+				<input type="button" id="randomize-pattern" value="Randomize"><br>
+
+				<input type="button" id="close-border" value="Close border">
+				<input type="button" id="open-border" value="Open border">
+
+			</fieldset>
+
+			<fieldset>
+				<legend>Grid size</legend>
+				<label>Width: <input type="text" value="" id="grid-width" size="3"></label>
+				<label>Height: <input type="text" value="" id="grid-height" size="3"></label>
+				<input type="button" value="Apply" id="set-grid-size">
+			</fieldset>
+
+			<fieldset id="settings">
+				<legend>Settings</legend>
+
+				<label><input type="checkbox" id="show-ui" checked="checked"> Show grid</label>
+
+				<label>
+					<span class="title">Cell size:</span>
+					<input id="cell-size" type="range" min="12" max="100">
+					<span id="cell-size-num">27</span> px
+				</label>
+
+				<label>
+					<span class="title">String size:</span>
+					<input id="string-size" type="range" min="1" max="25">
+					<span id="string-size-num">18</span> px
+				</label>
+
+				<label>
+					<span class="title">Stroke width:</span>
+					<input id="stroke-width" type="range" min="1" max="25">
+					<span id="stroke-width-num">3</span> px
+				</label>
+			</fieldset>
+
+			<fieldset id="colors">
+				<legend>Colors</legend>
+
+				<label>
+					<span class="title">String color:</span>
+					<input type="text" id="string-color" value="" class="color-picker miniColors" maxlength="7" autocomplete="off"><a class="miniColors-trigger" style="background-color: rgb(79, 163, 20);" href="https://w-shadow.com/celtic-knots/#"></a>
+				</label>
+
+				<label>
+					<span class="title">Stroke color:</span>
+					<input type="text" id="stroke-color" value="" class="color-picker miniColors" maxlength="7" autocomplete="off"><a class="miniColors-trigger" style="background-color: rgb(0, 0, 0);" href="https://w-shadow.com/celtic-knots/#"></a>
+				</label>
+
+				<label>
+					<span class="title">Background:</span>
+					<input type="text" id="background-color" value="" class="color-picker miniColors" maxlength="7" autocomplete="off"><a class="miniColors-trigger" style="background-color: rgb(0, 0, 0);" href="https://w-shadow.com/celtic-knots/#"></a>
+				</label>
+			</fieldset>
+
+			<fieldset id="downloads">
+				<legend>Download image</legend>
+
+				<input type="button" id="download-image" value="Download as PNG">
+			</fieldset>
+		</div>
+
+		<canvas id="myCanvas" width="630" height="625">
+			Your browser does not support the canvas element. Try a recent version of
+			Google Chrome, Opera or Firefox instead.
+		</canvas>
+
+		<div class="clear"></div>
+	</div>
+
+	<div id="footer">
+		© 2012-2018 <a href="http://w-shadow.com/">Janis Elsts</a> |
+		Color picker icon by <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>.
+	</div>
+
+  </body></html>
