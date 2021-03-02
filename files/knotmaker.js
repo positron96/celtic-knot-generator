@@ -286,8 +286,13 @@ var KnotMaker = (function($) {
 		function rotate(drawFunction, degrees) {
 			return function(context, settings) {
 				//context.fillStyle = {90:'red',180:'green',270:'blue'}[degrees];
-				context.rotate(degrees, settings.cellSize/2, settings.cellSize/2);
-				drawFunction(context, settings);
+				//context.rotate(degrees, settings.cellSize/2, settings.cellSize/2);
+				g = context.group();
+				g.fillStyle = context.fillStyle;
+				g.strokeStyle = context.strokeStyle;
+				g.lineWidth = context.lineWidth;
+				g.attr('transform', 'rotate('+degrees+' '+settings.cellSize/2+' '+settings.cellSize/2+')')
+				drawFunction(g, settings);
 			};
 		}
 
@@ -299,12 +304,10 @@ var KnotMaker = (function($) {
 		function flipHorizontally(drawFunction) {
 			return function(context, settings) {
 				g = context.group();
-				g.flip('x', settings.cellSize/2, 0);
-				//g.transform({scale(1 0.5):'x'gs.cellSize]});
-				//g.attr('transform', 'scale(-1 1)');
 				g.fillStyle = context.fillStyle;
 				g.strokeStyle = context.strokeStyle;
 				g.lineWidth = context.lineWidth;
+				g.attr('transform', "scale(-1 1) translate("+(-settings.cellSize)+" 0)");
 				drawFunction(g, settings);
 			}
 		}
@@ -436,8 +439,7 @@ var KnotMaker = (function($) {
 				g.fillStyle = settings.stringColor;
 				g.strokeStyle = settings.strokeColor;
 				g.lineWidth = settings.strokeWidth;
-				//g.translate(x*settings.cellSize, y*settings.cellSize);
-				g.transform({translate:[x*settings.cellSize, y*settings.cellSize]});
+				g.attr('transform', 'translate('+x*settings.cellSize+' '+y*settings.cellSize+')');
 
 				/*
 				 * Figure out which cuts we need to look at. They're different for
@@ -577,7 +579,8 @@ var KnotMaker = (function($) {
 				var center = getVisualCutCenter(settings, row, column);
 				var pb = PathBuilder();
 				var path = context.path("");
-				path.transform({translate:[center.x, center.y]});
+				//path.move(center.x, center.y)
+				path.attr({x:center.x, y:center.y});
 
 				pb.beginPath();
 				if ( cutType == VERT_CUT ) {
