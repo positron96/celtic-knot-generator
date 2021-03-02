@@ -1,0 +1,65 @@
+#wrapper {
+	min-width: 960px;
+	margin: 0;
+	padding: 0;
+}
+
+#editor-controls {
+	width: 330px;
+	float: left;
+	margin-right: 10px;
+}
+
+fieldset {
+	display: block;
+	margin: 2px;
+	border: 2px groove threedface;
+	padding: 0.35em 0.75em 0.75em 0.65em;
+}
+
+label .title {
+	display: inline-block;
+	width: 6em;
+}
+
+#settings label, #colors label {
+	display: inline-block;
+	clear: right;
+	margin: 2px 0;
+}
+
+#settings input[type="range"] {
+	width: 145px;
+}
+
+#tools input[type="button"] {
+	width: 8em;
+	margin-right: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+#colors input[type="text"] {
+	padding: 1px;
+}
+
+h1 {
+	color: #505050;
+}
+
+.clear {
+	clear: both;
+}
+
+#footer {
+	width: 100%;
+	margin: 40px 0 0 0;
+	color: gray;
+}
+
+#footer a {
+	color: gray;
+}
+
+#footer a:hover {
+	color: blue;
+}
