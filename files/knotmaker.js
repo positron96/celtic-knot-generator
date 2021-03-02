@@ -576,17 +576,15 @@ var KnotMaker = (function($) {
 
 				//context.save();
 
-				var center = getVisualCutCenter(settings, row, column);
+				var c = getVisualCutCenter(settings, row, column);
 				
 				var path = context.line();
-				path.attr({x:center.x, y:center.y});
-
 				
 				if ( cutType == VERT_CUT ) {
-					path.plot(0, -settings.cellSize,  0, settings.cellSize);
+					path.plot(c.x, c.y-settings.cellSize,  c.x, c.y+settings.cellSize);
 
 				} else if ( cutType == HORIZ_CUT ) {
-					path.plot(-settings.cellSize, 0, settings.cellSize, 0);
+					path.plot(c.x-settings.cellSize, c.y, c.x+settings.cellSize, c.y);
 				}
 
 				path.stroke({color:settings.cutColor, width:4}).fill('none');
