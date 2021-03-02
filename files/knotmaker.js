@@ -522,7 +522,7 @@ var KnotMaker = (function($) {
 	 * @param selectionDistance
 	 */
 	function getClosestNode(settings, offsetX, offsetY, selectionDistance) {
-		selectionDistance = (typeof selectionDistance == "undefined") ? (settings.cellSize / 2) : selectionDistance;
+		selectionDistance = (typeof selectionDistance == "undefined") ? settings.cellSize : selectionDistance;
 
 		//Find the closest control node.
 		var closestRow = Math.round(offsetY / settings.cellSize);
