@@ -1,4 +1,6 @@
-# celtic-knot-generator
+# Celtic Knot Generator
+
+**Check out the [live site](https://positron96.github.io/celtic-knot-generator/)!**
 
 This project is a fork of [Celtic Knot Genertor](https://w-shadow.com/celtic-knots/) written by by Janis Elsts in 2012-2018 
 ([description](https://w-shadow.com/blog/2012/05/17/celtic-knot-generator-canvas/)).
