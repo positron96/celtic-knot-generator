@@ -300,6 +300,8 @@ var KnotMaker = (function($) {
 			return function(context, settings) {
 				g = context.group();
 				g.flip('x', settings.cellSize/2, 0);
+				//g.transform({scale(1 0.5):'x'gs.cellSize]});
+				//g.attr('transform', 'scale(-1 1)');
 				g.fillStyle = context.fillStyle;
 				g.strokeStyle = context.strokeStyle;
 				g.lineWidth = context.lineWidth;
@@ -434,7 +436,8 @@ var KnotMaker = (function($) {
 				g.fillStyle = settings.stringColor;
 				g.strokeStyle = settings.strokeColor;
 				g.lineWidth = settings.strokeWidth;
-				g.translate(x*settings.cellSize, y*settings.cellSize);
+				//g.translate(x*settings.cellSize, y*settings.cellSize);
+				g.transform({translate:[x*settings.cellSize, y*settings.cellSize]});
 
 				/*
 				 * Figure out which cuts we need to look at. They're different for
@@ -477,14 +480,14 @@ var KnotMaker = (function($) {
 	 */
 
 	function renderGrid(context, settings) {
-		for (var x = 0; x < settings.columns; x++) {
-			for (var y = 0; y < settings.rows; y++) {
-				context.
-					rect(settings.cellSize, settings.cellSize).
-					fill('none').
-					translate(x*settings.cellSize, y*settings.cellSize).
-					stroke({ color:settings.gridColor, width:2 });
-			}
+		var cs = settings.cellSize;
+		for (var x = 0; x <= settings.columns; x++) {
+			context.line(x*cs, 0, x*cs, settings.rows*cs).
+				stroke({ color:settings.gridColor, width:2 });
+		}
+		for (var y = 0; y <= settings.rows; y++) {
+			context.line(0, y*cs, settings.columns*cs, y*cs).
+				stroke({ color:settings.gridColor, width:2 });			
 		}
 	}
 
@@ -611,9 +614,7 @@ var KnotMaker = (function($) {
 
 		//context.save();
 		var center = getVisualNodeCenter(settings, row, column);
-		context.rect(nodeSize, nodeSize).
-			translate(center.x, center.y).
-			translate(-nodeSize/2, -nodeSize/2).
+		context.rect(nodeSize, nodeSize).move(center.x-nodeSize/2, center.y-nodeSize/2).
 			fill(context.fillStyle);
 		//context.translate(center.x, center.y);
 		//context.fillRect(- nodeSize / 2, - nodeSize / 2, nodeSize, nodeSize);
