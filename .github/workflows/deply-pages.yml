@@ -1,0 +1,27 @@
+name: Deply to pages
+
+on: 
+  push:
+    branches:    
+      - master
+    tags:
+      - release.*
+
+
+jobs:
+     
+  deploy:    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v1
+      - name: mv to index
+        run: mv 'Celtic Knot Generator.html' index.html
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.0.0
+        with:
+          branch: gh-pages
+          folder: .
+        
+  
+         
