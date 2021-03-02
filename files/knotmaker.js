@@ -695,7 +695,7 @@ var KnotMaker = (function($) {
 	 */
 	function redrawInterface() {
 		context.clear();
-		context.transform({'translateX':outputOffset.x, 'translateY':outputOffset.y});
+		//context.transform({'translateX':outputOffset.x, 'translateY':outputOffset.y});
 		context.rect('100%', '100%').fill(settings.backgroundColor);
 
 		if (settings.showUi && settings.showGrid) {
@@ -832,15 +832,16 @@ var KnotMaker = (function($) {
 		cutColumns = settings.columns / 2 + 1;
 		
 		//Resize the canvas to show all rows & columns.
-		var canvasWidth = outputOffset.x + columns * settings.cellSize + 15;
-		var canvasHeight = outputOffset.y + rows * settings.cellSize + 15;
+		var canvasWidth = columns * settings.cellSize;
+		var canvasHeight = rows * settings.cellSize;
 		
 		//Don't make it smaller than the initial 600x500 dimensions.
 		canvasWidth = Math.max(canvasWidth, 900);
 		canvasHeight = Math.max(canvasHeight, 900);
 		
-		canvas.attr('width', canvasWidth);
-		canvas.attr('height', canvasHeight);
+		canvas.attr('width', canvasWidth+outputOffset.x);
+		canvas.attr('height', canvasHeight+outputOffset.y);
+		context.viewbox(-outputOffset.x, -outputOffset.y, canvasWidth, canvasHeight);
 						
 		resetPattern();
 	}
