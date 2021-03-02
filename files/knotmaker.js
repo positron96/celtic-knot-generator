@@ -112,7 +112,7 @@ var KnotMaker = (function($) {
 			context.rect(
 				settings.cellSize,
 				settings.stringSize
-			).translate(0,settings.halfCellSize - settings.halfStringSize).fill(context.fillStyle);
+			).move(0,settings.halfCellSize - settings.halfStringSize).fill(context.fillStyle);
 
 			pb = PathBuilder();
 			pb.moveTo(0, settings.halfCellSize - settings.halfStringSize);
@@ -577,22 +577,18 @@ var KnotMaker = (function($) {
 				//context.save();
 
 				var center = getVisualCutCenter(settings, row, column);
-				var pb = PathBuilder();
-				var path = context.path("");
-				//path.move(center.x, center.y)
+				
+				var path = context.line();
 				path.attr({x:center.x, y:center.y});
 
-				pb.beginPath();
+				
 				if ( cutType == VERT_CUT ) {
-					pb.moveTo(0, - settings.cellSize);
-					pb.lineTo(0, settings.cellSize);
+					path.plot(0, -settings.cellSize,  0, settings.cellSize);
 
 				} else if ( cutType == HORIZ_CUT ) {
-					pb.moveTo(- settings.cellSize, 0);
-					pb.lineTo(settings.cellSize, 0);
+					path.plot(-settings.cellSize, 0, settings.cellSize, 0);
 				}
 
-				path.plot( pb.gen());
 				path.stroke({color:settings.cutColor, width:4}).fill('none');
 				//context.strokeStyle = ;
 				//context.stroke();
