@@ -46,6 +46,7 @@ var KnotMaker = (function($) {
 	 */
 	var canvas = null;
 	var context = null;
+	var style = null;
 
 	/*
 	 * Custom origin point for rendering. Useful since some
@@ -89,9 +90,13 @@ var KnotMaker = (function($) {
 			closePath: function(x,y){this.arr.push('Z') },
 			gen: function() { return this.arr.join(' '); },
 			stroke: function(ctx, col) { 
-				ctx.path(this.gen()).fill('none').stroke(col || {'color':ctx.strokeStyle,'width':ctx.lineWidth}); 
+				return ctx.path(this.gen()).
+					attr('class', col || 'knotlines');
 			},
-			fill: function(ctx, col) { ctx.path(this.gen()).stroke('none').fill(col || ctx.fillStyle); }
+			fill: function(ctx, col) { 
+				return ctx.path(this.gen()).
+					attr('class', col || 'knotfill');
+			}
 		}
 	};
 
@@ -112,7 +117,7 @@ var KnotMaker = (function($) {
 			context.rect(
 				settings.cellSize,
 				settings.stringSize
-			).move(0,settings.halfCellSize - settings.halfStringSize).fill(context.fillStyle);
+			).move(0,settings.halfCellSize - settings.halfStringSize).attr('class', 'knotfill');
 
 			pb = PathBuilder();
 			pb.moveTo(0, settings.halfCellSize - settings.halfStringSize);
@@ -421,6 +426,9 @@ var KnotMaker = (function($) {
 	 * @param cuts
 	 */
 	function renderKnotwork(context, settings, cuts) {
+		context = context.findOne("#knotwork");
+		context.clear();
+
 		settings.halfCellSize = settings.cellSize / 2;
 		settings.halfStringSize = settings.stringSize / 2;
 
@@ -482,6 +490,8 @@ var KnotMaker = (function($) {
 	 */
 
 	function renderGrid(context, settings) {
+		context = context.findOne('#grid');
+		context.clear();
 		var cs = settings.cellSize;
 		for (var x = 0; x <= settings.columns; x++) {
 			context.line(x*cs, 0, x*cs, settings.rows*cs).
@@ -564,6 +574,8 @@ var KnotMaker = (function($) {
 	}
 
 	function renderCuts(context, settings, cuts) {
+		context = context.findOne('#cuts');
+		context.clear();
 		for (var row = 0; row < cuts.length; row++) {
 			for (var column = 0; column < cuts[row].length; column++) {
 
@@ -611,14 +623,17 @@ var KnotMaker = (function($) {
 
 		//context.save();
 		var center = getVisualNodeCenter(settings, row, column);
-		context.rect(nodeSize, nodeSize).move(center.x-nodeSize/2, center.y-nodeSize/2).
-			fill(context.fillStyle);
+		context.circle().move(center.x, center.y).
+			fill(context.fillStyle).id('node'+row+'x'+column).attr('class', 'node');
 		//context.translate(center.x, center.y);
 		//context.fillRect(- nodeSize / 2, - nodeSize / 2, nodeSize, nodeSize);
 		//context.restore();
 	}
 
 	function renderControlNodes(context, settings) {
+		context = context.findOne('#nodes');
+		context.clear();
+
 		var lastColumn = settings.columns / 2;
 
 		for (var row = 0; row < settings.rows + 1; row++) {
@@ -631,7 +646,7 @@ var KnotMaker = (function($) {
 		}
 
 		//Draw a cut line from the selected node to the hovered node, if possible.
-		if ((selectedNode != null) && (hoverNode != null) && canCut(selectedNode, hoverNode)) {
+		/*if ((selectedNode != null) && (hoverNode != null) && canCut(selectedNode, hoverNode)) {
 			var start = getVisualNodeCenter(settings, selectedNode.row, selectedNode.column);
 			var end = getVisualNodeCenter(settings, hoverNode.row, hoverNode.column);
 
@@ -644,14 +659,29 @@ var KnotMaker = (function($) {
 			pb.lineTo(end.x, end.y);
 			pb.stroke(context);
 
-		}
+		}*/
 
-		if (selectedNode != null) {
+		/*if (selectedNode != null) {
 			renderNode(context, settings, selectedNode.row, selectedNode.column, true);
 		}
 
 		if (hoverNode != null) {
 			renderNode(context, settings, hoverNode.row, hoverNode.column, true);
+		}*/
+	}
+
+	function renderCurrentCut(context, settings) {
+		if ((selectedNode != null) && (hoverNode != null) && canCut(selectedNode, hoverNode)) {
+			var start = getVisualNodeCenter(settings, selectedNode.row, selectedNode.column);
+			var end = getVisualNodeCenter(settings, hoverNode.row, hoverNode.column);
+			context = context.findOne('#cuts');
+			var line = context.findOne('#currentCut');
+			if(!line) {
+				line = context.line().stroke({'width':4, 'color':settings.newCutColor}).attr('id', 'currentCut');
+			}
+			line.plot(start.x, start.y, end.x, end.y);
+			
+
 		}
 	}
 
@@ -694,13 +724,13 @@ var KnotMaker = (function($) {
 	 * The main rendering function. Redraws the knotwork and the pattern editor UI.
 	 */
 	function redrawInterface() {
-		context.clear();
+		//context.clear();
 		//context.transform({'translateX':outputOffset.x, 'translateY':outputOffset.y});
-		context.rect('100%', '100%').fill(settings.backgroundColor);
+		//context.rect('100%', '100%').fill(settings.backgroundColor);
 
-		if (settings.showUi && settings.showGrid) {
+		/*if (settings.showUi && settings.showGrid) {
 			renderGrid(context, settings);
-		}
+		}*/
 
 		renderKnotwork(context, settings, cuts);
 
@@ -842,6 +872,10 @@ var KnotMaker = (function($) {
 		canvas.attr('width', canvasWidth+outputOffset.x);
 		canvas.attr('height', canvasHeight+outputOffset.y);
 		context.viewbox(-outputOffset.x, -outputOffset.y, canvasWidth, canvasHeight);
+		
+		renderGrid(context, settings);
+		renderCuts(context, settings, cuts);
+		renderControlNodes(context, settings);
 						
 		resetPattern();
 	}
@@ -875,6 +909,7 @@ var KnotMaker = (function($) {
 
 		canvas = $(canvasElement);
 		context = SVG(canvasElement);//canvasElement.getContext("2d");
+		style = canvas[0].getElementById('svgStyle').sheet;
 		settings = $.extend({}, settings, generatorSettings);
 
 		setKnotworkSize(settings.rows, settings.columns);
@@ -901,7 +936,13 @@ var KnotMaker = (function($) {
 
 			if (!isSameNode(closestNode, hoverNode)) {
 				hoverNode = closestNode;
-				redrawInterface();
+				//console.log(hoverNode);
+				console.log( context.findOne('#node'+hoverNode.row+'x'+hoverNode.column) );
+				context.find('.node_hover').attr('class', 'node');
+				context.findOne('#node'+hoverNode.row+'x'+hoverNode.column).attr('class', 'node_hover');
+				//redrawInterface();
+				//renderControlNodes(context, settings);
+				renderCurrentCut(context, settings);
 			}
 		});
 
@@ -972,7 +1013,30 @@ var KnotMaker = (function($) {
 
 			redrawInterface();
 		});
+
+		setStringColor( settings.stringColor );
+		setStrokeColor( settings.strokeColor );
+		setStrokeWidth( settings.strokeWidth );
 	}
+
+	function setStrokeWidth(width) {
+		settings.strokeWidth = Math.min(Math.max(width, 1), settings.cellSize - 2);
+		style.rules[1].style.strokeWidth = width;
+	}
+
+	function setStringColor(color) {
+		settings.stringColor = color;
+		style.rules[0].style.fill = color;
+		//console.log( document.getElementById('svgStyle').childNodes );
+	}
+
+	function setStrokeColor(color) {
+		settings.strokeColor = color;
+		style.rules[1].style.stroke = color;
+		//$('.knotlines').css('stroke', color);
+		//redrawInterface();
+	}
+
 
 	/**
 	 * The public API.
@@ -1010,7 +1074,8 @@ var KnotMaker = (function($) {
 		showUi : function(show) {
 			show = (typeof show == "undefined") ? true : show;
 			settings.showUi = show;
-			redrawInterface();
+			//redrawInterface();
+			context.find('.ui').attr('visibility', show?'visible':'hidden');
 		},
 		setGridSize: function(rows, columns) {
 			setKnotworkSize(rows, columns);
@@ -1041,16 +1106,17 @@ var KnotMaker = (function($) {
 			if (settings.strokeWidth > settings.cellSize - 2) {
 				settings.strokeWidth = settings.cellSize - 2;
 			}
-			redrawInterface();
+			renderGrid(context, settings);
+			renderCuts(context, settings, cuts);
+			renderControlNodes(context, settings);
+			renderKnotwork(context, settings,cuts);
+			//redrawInterface();
 		},
 		setStringSize: function(size) {
 			settings.stringSize = Math.min(Math.max(size, 1), settings.cellSize - 2);
 			redrawInterface();
 		},
-		setStrokeWidth: function(width) {
-			settings.strokeWidth = Math.min(Math.max(width, 1), settings.cellSize - 2);
-			redrawInterface();
-		},
+		setStrokeWidth: setStrokeWidth,
 
 		getStringColor: function() {
 			return settings.stringColor;
@@ -1062,17 +1128,12 @@ var KnotMaker = (function($) {
 			return settings.backgroundColor;
 		},
 
-		setStringColor: function(color) {
-			settings.stringColor = color;
-			redrawInterface();
-		},
-		setStrokeColor: function(color) {
-			settings.strokeColor = color;
-			redrawInterface();
-		},
+		setStringColor: setStringColor,
+		setStrokeColor: setStrokeColor,
 		setBackgroundColor: function(color) {
 			settings.backgroundColor = color;
-			redrawInterface();
+			context.findOne('#bg').fill(color);
+			//redrawInterface();
 		},
 
 		/**
