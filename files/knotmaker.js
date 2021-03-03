@@ -145,6 +145,13 @@ var KnotMaker = (function($) {
 			pb.lineTo(settings.cellSize, h);
 			pb.lineTo(h, settings.cellSize);
 			pb.closePath();
+			pb.fill(context, 'aa').fill('url(#grad)');
+
+			pb.beginPath();
+			pb.moveTo(settings.cellSize - h, 0);
+			pb.lineTo(settings.cellSize, 0);
+			pb.lineTo(settings.cellSize, h);
+			pb.closePath();
 			pb.fill(context);
 
 			pb.beginPath();
@@ -256,19 +263,25 @@ var KnotMaker = (function($) {
 			pb = PathBuilder();
 			pb.moveTo(settings.halfCellSize - settings.halfStringSize, settings.cellSize);
 			leftSideCurve(pb);
-
 			pb.lineTo(settings.cellSize, 0);
 			pb.lineTo(settings.cellSize, h);
 			rightSideCurve(pb);
-
 			pb.closePath();
-			pb.fill(context);
+			var area = pb.fill(context, 'aaa');
+			if(!crossOver) { 
+				area.fill('url(#gradrot)'); 
+				pb.beginPath();
+				pb.moveTo(settings.cellSize - h, 0);
+				pb.lineTo(settings.cellSize, 0);
+				pb.lineTo(settings.cellSize, h);
+				pb.closePath();
+				pb.fill(context);
+			} else area.attr('class', 'knotfill');
 
 			//Stroke the outline
 			pb.beginPath();		
 			pb.moveTo(settings.halfCellSize - settings.halfStringSize, settings.cellSize);
 			leftSideCurve(pb);
-
 			if ( crossOver ) {
 				pb.moveTo(settings.cellSize, h);
 			} else {
@@ -276,6 +289,7 @@ var KnotMaker = (function($) {
 			}
 			rightSideCurve(pb);
 			pb.stroke(context);
+
 		}
 
 		function drawCurvedCrossUnder(context, settings) {
@@ -848,6 +862,16 @@ var KnotMaker = (function($) {
 		hoverNode = null;
 	}
 
+	function resizeCanvas(settings) {
+		var canvasWidth = settings.columns * settings.cellSize;
+		var canvasHeight = settings.rows * settings.cellSize;
+			
+		canvas.attr('width', canvasWidth+outputOffset.x*2);
+		canvas.attr('height', canvasHeight+outputOffset.y*2);
+		context.viewbox(-outputOffset.x, -outputOffset.y, 
+			canvasWidth+outputOffset.x, canvasHeight+outputOffset.y);
+	}
+
 	function setKnotworkSize(rows, columns) {
 		if (rows % 2) {
 			rows++;
@@ -861,17 +885,7 @@ var KnotMaker = (function($) {
 		cutRows = settings.rows + 1;
 		cutColumns = settings.columns / 2 + 1;
 		
-		//Resize the canvas to show all rows & columns.
-		var canvasWidth = columns * settings.cellSize;
-		var canvasHeight = rows * settings.cellSize;
-		
-		//Don't make it smaller than the initial 600x500 dimensions.
-		canvasWidth = Math.max(canvasWidth, 900);
-		canvasHeight = Math.max(canvasHeight, 900);
-		
-		canvas.attr('width', canvasWidth+outputOffset.x);
-		canvas.attr('height', canvasHeight+outputOffset.y);
-		context.viewbox(-outputOffset.x, -outputOffset.y, canvasWidth, canvasHeight);
+		resizeCanvas(settings);
 		
 		renderGrid(context, settings);
 		renderCuts(context, settings, cuts);
@@ -937,7 +951,6 @@ var KnotMaker = (function($) {
 			if (!isSameNode(closestNode, hoverNode)) {
 				hoverNode = closestNode;
 				//console.log(hoverNode);
-				console.log( context.findOne('#node'+hoverNode.row+'x'+hoverNode.column) );
 				context.find('.node_hover').attr('class', 'node');
 				context.findOne('#node'+hoverNode.row+'x'+hoverNode.column).attr('class', 'node_hover');
 				//redrawInterface();
@@ -1027,6 +1040,8 @@ var KnotMaker = (function($) {
 	function setStringColor(color) {
 		settings.stringColor = color;
 		style.rules[0].style.fill = color;
+		style.rules[2].style.stopColor = color;		
+		style.rules[3].style.stopColor = chroma(color).darken(1.7).hex();
 		//console.log( document.getElementById('svgStyle').childNodes );
 	}
 
@@ -1106,6 +1121,7 @@ var KnotMaker = (function($) {
 			if (settings.strokeWidth > settings.cellSize - 2) {
 				settings.strokeWidth = settings.cellSize - 2;
 			}
+			resizeCanvas(settings);
 			renderGrid(context, settings);
 			renderCuts(context, settings, cuts);
 			renderControlNodes(context, settings);

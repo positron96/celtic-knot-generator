@@ -137,14 +137,15 @@ $(document).ready(function() {
 
 
 
-	var ContainerElements = ["svg","g"];
+	var ContainerElements = ["svg","g", "linearGradient"];
 	var RelevantStyles = {
 		"rect":["fill","stroke","stroke-width"],
 		"path":["fill","stroke","stroke-width"],
 		"circle":["fill","stroke","stroke-width"],
 		"line":["stroke","stroke-width"],
 		"text":["fill","font-size","text-anchor"],
-		"polygon":["stroke","fill"]
+		"polygon":["stroke","fill"],
+		"stop":["offset", "stop-color", "stop-opacity"]
 	};
 
 
