@@ -117,7 +117,7 @@ var KnotMaker = (function($) {
 			context.rect(
 				settings.cellSize,
 				settings.stringSize
-			).move(0,settings.halfCellSize - settings.halfStringSize).fill(context.fillStyle);
+			).move(0,settings.halfCellSize - settings.halfStringSize).attr('class', 'knotfill');
 
 			pb = PathBuilder();
 			pb.moveTo(0, settings.halfCellSize - settings.halfStringSize);
@@ -623,8 +623,8 @@ var KnotMaker = (function($) {
 
 		//context.save();
 		var center = getVisualNodeCenter(settings, row, column);
-		context.rect(nodeSize, nodeSize).move(center.x-nodeSize/2, center.y-nodeSize/2).
-			fill(context.fillStyle).id('node'+row+'x'+column);
+		context.circle().move(center.x, center.y).
+			fill(context.fillStyle).id('node'+row+'x'+column).attr('class', 'node');
 		//context.translate(center.x, center.y);
 		//context.fillRect(- nodeSize / 2, - nodeSize / 2, nodeSize, nodeSize);
 		//context.restore();
@@ -646,7 +646,7 @@ var KnotMaker = (function($) {
 		}
 
 		//Draw a cut line from the selected node to the hovered node, if possible.
-		if ((selectedNode != null) && (hoverNode != null) && canCut(selectedNode, hoverNode)) {
+		/*if ((selectedNode != null) && (hoverNode != null) && canCut(selectedNode, hoverNode)) {
 			var start = getVisualNodeCenter(settings, selectedNode.row, selectedNode.column);
 			var end = getVisualNodeCenter(settings, hoverNode.row, hoverNode.column);
 
@@ -659,14 +659,29 @@ var KnotMaker = (function($) {
 			pb.lineTo(end.x, end.y);
 			pb.stroke(context);
 
-		}
+		}*/
 
-		if (selectedNode != null) {
+		/*if (selectedNode != null) {
 			renderNode(context, settings, selectedNode.row, selectedNode.column, true);
 		}
 
 		if (hoverNode != null) {
 			renderNode(context, settings, hoverNode.row, hoverNode.column, true);
+		}*/
+	}
+
+	function renderCurrentCut(context, settings) {
+		if ((selectedNode != null) && (hoverNode != null) && canCut(selectedNode, hoverNode)) {
+			var start = getVisualNodeCenter(settings, selectedNode.row, selectedNode.column);
+			var end = getVisualNodeCenter(settings, hoverNode.row, hoverNode.column);
+			context = context.findOne('#cuts');
+			var line = context.findOne('#currentCut');
+			if(!line) {
+				line = context.line().stroke({'width':4, 'color':settings.newCutColor}).attr('id', 'currentCut');
+			}
+			line.plot(start.x, start.y, end.x, end.y);
+			
+
 		}
 	}
 
@@ -921,8 +936,13 @@ var KnotMaker = (function($) {
 
 			if (!isSameNode(closestNode, hoverNode)) {
 				hoverNode = closestNode;
+				//console.log(hoverNode);
+				console.log( context.findOne('#node'+hoverNode.row+'x'+hoverNode.column) );
+				context.find('.node_hover').attr('class', 'node');
+				context.findOne('#node'+hoverNode.row+'x'+hoverNode.column).attr('class', 'node_hover');
 				//redrawInterface();
-				renderControlNodes(context, settings);
+				//renderControlNodes(context, settings);
+				renderCurrentCut(context, settings);
 			}
 		});
 
@@ -993,7 +1013,30 @@ var KnotMaker = (function($) {
 
 			redrawInterface();
 		});
+
+		setStringColor( settings.stringColor );
+		setStrokeColor( settings.strokeColor );
+		setStrokeWidth( settings.strokeWidth );
 	}
+
+	function setStrokeWidth(width) {
+		settings.strokeWidth = Math.min(Math.max(width, 1), settings.cellSize - 2);
+		style.rules[1].style.strokeWidth = width;
+	}
+
+	function setStringColor(color) {
+		settings.stringColor = color;
+		style.rules[0].style.fill = color;
+		//console.log( document.getElementById('svgStyle').childNodes );
+	}
+
+	function setStrokeColor(color) {
+		settings.strokeColor = color;
+		style.rules[1].style.stroke = color;
+		//$('.knotlines').css('stroke', color);
+		//redrawInterface();
+	}
+
 
 	/**
 	 * The public API.
@@ -1066,16 +1109,14 @@ var KnotMaker = (function($) {
 			renderGrid(context, settings);
 			renderCuts(context, settings, cuts);
 			renderControlNodes(context, settings);
+			renderKnotwork(context, settings,cuts);
 			//redrawInterface();
 		},
 		setStringSize: function(size) {
 			settings.stringSize = Math.min(Math.max(size, 1), settings.cellSize - 2);
 			redrawInterface();
 		},
-		setStrokeWidth: function(width) {
-			settings.strokeWidth = Math.min(Math.max(width, 1), settings.cellSize - 2);
-			style.rules[1].style.strokeWidth = width;
-		},
+		setStrokeWidth: setStrokeWidth,
 
 		getStringColor: function() {
 			return settings.stringColor;
@@ -1087,16 +1128,8 @@ var KnotMaker = (function($) {
 			return settings.backgroundColor;
 		},
 
-		setStringColor: function(color) {
-			settings.stringColor = color;
-			style.rules[0].style.fill = color;
-		},
-		setStrokeColor: function(color) {
-			settings.strokeColor = color;
-			style.rules[1].style.stroke = color;
-			//$('.knotlines').css('stroke', color);
-			//redrawInterface();
-		},
+		setStringColor: setStringColor,
+		setStrokeColor: setStrokeColor,
 		setBackgroundColor: function(color) {
 			settings.backgroundColor = color;
 			context.findOne('#bg').fill(color);
