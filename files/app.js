@@ -116,7 +116,7 @@ $(document).ready(function() {
 		updateOptionsUi();
 	});
 
-	$('.color-picker').miniColors({
+	$('input.minicolors').minicolors({
 		letterCase: 'uppercase',
 		change: function(hex) {
 			//Color inputs have IDs like this - "something-color".
