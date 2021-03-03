@@ -135,18 +135,64 @@ $(document).ready(function() {
 		}
 	});
 
-	function saveSvg(svg_data) {
-		svg_data = svg_data.innerHTML;
 
-        var head = '<svg title="graph" version="1.1" xmlns="http://www.w3.org/2000/svg">'
 
-        var style = '';//'<style>circle {cursor: pointer;stroke-width: 1.5px;}text {font: 10px arial;}path {stroke: DimGrey;stroke-width: 1.5px;}</style>'
-
-        var full_svg = head +  style + svg_data + "</svg>"
-        var blob = new Blob([full_svg], {type: "image/svg+xml"});  
-        saveAs(blob, "image.svg");
-
+	var ContainerElements = ["svg","g"];
+	var RelevantStyles = {
+		"rect":["fill","stroke","stroke-width"],
+		"path":["fill","stroke","stroke-width"],
+		"circle":["fill","stroke","stroke-width"],
+		"line":["stroke","stroke-width"],
+		"text":["fill","font-size","text-anchor"],
+		"polygon":["stroke","fill"]
 	};
+
+
+	function applySvgStyle(node, origNode){
+		var nodes = node.childNodes;
+		var origNodes = origNode.childNodes;     
+
+		for (var cd = 0; cd < nodes.length; cd++){
+			var child = nodes[cd];
+
+			var tagName = child.tagName;
+			if (ContainerElements.indexOf(tagName) != -1){
+				applySvgStyle(child, origNodes[cd])
+			} else if (tagName in RelevantStyles){
+				var styleDef = window.getComputedStyle(origNodes[cd]);
+
+				var styleString = "";
+				for (var st = 0; st < RelevantStyles[tagName].length; st++){
+					styleString += RelevantStyles[tagName][st] + ":" + styleDef.getPropertyValue(RelevantStyles[tagName][st]) + "; ";
+				}
+				child.setAttribute("style",styleString);
+			}
+		}
+
+	}
+
+	
+	function saveSvg(SVGElem){
+
+		var oDOM = SVGElem.cloneNode(true)
+		applySvgStyle(oDOM, SVGElem)
+
+		var data = new XMLSerializer().serializeToString(oDOM);
+		var blob = new Blob([data], { type: "image/svg+xml;charset=utf-8" });
+
+		saveAs(blob, "image.svg");
+
+		/*var url = URL.createObjectURL(svg);
+
+		var link = document.createElement("a");
+		link.setAttribute("target","_blank");
+		var Text = document.createTextNode("Export");
+		link.appendChild(Text);
+		link.href=url;
+
+		document.body.appendChild(link);*/
+	}
+
 
 	$('#download-image').click(function() {
 		var button = $(this);
