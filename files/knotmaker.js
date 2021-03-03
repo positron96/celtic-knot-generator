@@ -52,7 +52,7 @@ var KnotMaker = (function($) {
 	 * Custom origin point for rendering. Useful since some
 	 * UI elements can extend outside the primary work area.
 	 */
-	var outputOffset = {x : 15, y : 10};
+	var outputOffset = {x : 10, y : 10};
 
 	/**
 	 * The knotwork pattern is defined by an array of cuts.
@@ -869,7 +869,7 @@ var KnotMaker = (function($) {
 		canvas.attr('width', canvasWidth+outputOffset.x*2);
 		canvas.attr('height', canvasHeight+outputOffset.y*2);
 		context.viewbox(-outputOffset.x, -outputOffset.y, 
-			canvasWidth+outputOffset.x, canvasHeight+outputOffset.y);
+			canvasWidth+outputOffset.x*2, canvasHeight+outputOffset.y*2);
 	}
 
 	function setKnotworkSize(rows, columns) {
