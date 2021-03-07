@@ -1089,8 +1089,8 @@ var KnotMaker = (function($) {
 		showUi : function(show) {
 			show = (typeof show == "undefined") ? true : show;
 			settings.showUi = show;
-			//redrawInterface();
-			context.find('.ui').attr('visibility', show?'visible':'hidden');
+			context.find('.ui').attr('display', show?'inline':'none');
+			if(show) renderCuts();
 		},
 		setGridSize: function(rows, columns) {
 			setKnotworkSize(rows, columns);
