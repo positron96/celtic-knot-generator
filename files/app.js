@@ -52,6 +52,8 @@ $(document).ready(function() {
 			.val(KnotMaker.getStrokeWidth());
 		$('#stroke-width-num').text(KnotMaker.getStrokeWidth());
 
+		$('#shadow-depth').val(KnotMaker.getShadowDepth());
+		$('#shadow-depth-num').text(KnotMaker.getShadowDepth());
 
 		$('#string-color').val(KnotMaker.getStringColor());
 		$('#stroke-color').val(KnotMaker.getStrokeColor());
@@ -81,7 +83,7 @@ $(document).ready(function() {
 	 * The same goes for stroke width.
 	 */
 
-	$('#cell-size, #string-size, #stroke-width').change(function() {
+	$('#cell-size, #string-size, #stroke-width, #shadow-depth').change(function() {
 		if (isUiUpdating) {
 			return;
 		}
@@ -113,6 +115,14 @@ $(document).ready(function() {
 			return;
 		}
 		KnotMaker.setStrokeWidth($(this).val());
+		updateOptionsUi();
+	});
+
+	$('#shadow-depth').change(function() {
+		if (isUiUpdating) {
+			return;
+		}
+		KnotMaker.setShadowDepth( parseInt($(this).val()) );
 		updateOptionsUi();
 	});
 

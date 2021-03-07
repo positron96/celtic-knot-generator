@@ -18,6 +18,7 @@ var KnotMaker = (function($) {
 		cellSize : 53,
 		stringSize : 22,
 		strokeWidth : 2,
+		shadowDepth: 0,
 		stringColor : "#FF9A39",
 		strokeColor : "#000000",
 		backgroundColor: "#FFFFFF",
@@ -145,7 +146,12 @@ var KnotMaker = (function($) {
 			pb.lineTo(settings.cellSize, h);
 			pb.lineTo(h, settings.cellSize);
 			pb.closePath();
-			pb.fill(context, 'aa').fill('url(#grad)');
+			var obj = pb.fill(context, 'aa');
+			if(settings.shadowDepth) {
+				obj.fill('url(#grad)');
+			} else {
+				obj.attr('class', 'knotfill');
+			}
 
 			pb.beginPath();
 			pb.moveTo(settings.cellSize - h, 0);
@@ -269,7 +275,12 @@ var KnotMaker = (function($) {
 			pb.closePath();
 			var area = pb.fill(context, 'aaa');
 			if(!crossOver) { 
-				area.fill('url(#gradrot)'); 
+				if(settings.shadowDepth) {
+					area.fill('url(#gradrot)'); 
+				} else {
+					area.attr('class', 'knotfill');
+				}
+				
 				pb.beginPath();
 				pb.moveTo(settings.cellSize - h, 0);
 				pb.lineTo(settings.cellSize, 0);
@@ -1037,12 +1048,18 @@ var KnotMaker = (function($) {
 		style.rules[1].style.strokeWidth = width;
 	}
 
+	function updateColors() {
+		style.rules[0].style.fill = settings.stringColor;
+		style.rules[2].style.stopColor = settings.stringColor;		
+		if(settings.shadowDepth!=0) {
+			style.rules[3].style.stopColor = chroma(settings.stringColor).darken(settings.shadowDepth).hex();
+		}
+		//console.log( document.getElementById('svgStyle').childNodes );
+	}
+
 	function setStringColor(color) {
 		settings.stringColor = color;
-		style.rules[0].style.fill = color;
-		style.rules[2].style.stopColor = color;		
-		style.rules[3].style.stopColor = chroma(color).darken(1.7).hex();
-		//console.log( document.getElementById('svgStyle').childNodes );
+		updateColors();
 	}
 
 	function setStrokeColor(color) {
@@ -1133,6 +1150,16 @@ var KnotMaker = (function($) {
 			redrawInterface();
 		},
 		setStrokeWidth: setStrokeWidth,
+
+		setShadowDepth: function(d) {
+			settings.shadowDepth = d;
+			updateColors();
+			renderKnotwork(context, settings, cuts);
+		},
+
+		getShadowDepth: function() {
+			return settings.shadowDepth;
+		},
 
 		getStringColor: function() {
 			return settings.stringColor;
