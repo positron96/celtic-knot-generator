@@ -15,7 +15,13 @@ $(document).ready(function() {
 	});
 
 	$('#randomize-pattern').click(function(){
-		KnotMaker.randomizePattern();
+		var myrng = new Math.seedrandom(""+ Date.now() );
+		$('#pattern-seed').val( myrng.int32() );
+		$('#set-seed').click();
+	});
+
+	$('#set-seed').click(function(){
+		KnotMaker.randomizePattern( $('#pattern-seed').val() );
 	});
 
 	$('#close-border').click(function() {

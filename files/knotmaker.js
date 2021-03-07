@@ -818,10 +818,13 @@ var KnotMaker = (function($) {
 	 * @param bilateralSymmetry
 	 * @param quadrilateralSymmetry
 	 */
-	function makeBetterRandomPattern(cutRows, cutColumns, totalCuts, bilateralSymmetry, quadrilateralSymmetry) {
+	function makeBetterRandomPattern(cutRows, cutColumns, seed, totalCuts, bilateralSymmetry, quadrilateralSymmetry) {
+		seed = (typeof seed == 'undefined') ? 0 : seed;
 		totalCuts = (typeof totalCuts == 'undefined') ? Math.floor(cutRows * cutColumns * 0.3) : totalCuts;
 		bilateralSymmetry = (typeof bilateralSymmetry == 'undefined') ? 50 : bilateralSymmetry;
 		quadrilateralSymmetry = (typeof quadrilateralSymmetry == 'undefined') ? 50 : quadrilateralSymmetry;
+
+		var rng = new Math.seedrandom(seed);
 
 		var states = [NO_CUT, VERT_CUT, HORIZ_CUT];
 		var possibleStates = states;
@@ -830,10 +833,10 @@ var KnotMaker = (function($) {
 		var row = 0, column = 0, maxColumns = 0, newState = NO_CUT;
 
 		for (var i = 0; i < totalCuts; i++) {
-			row = Math.floor(Math.random() * cutRows);
+			row = Math.floor(rng() * cutRows);
 
 			maxColumns = (row % 2) ? cutColumns : (cutColumns - 1);
-			column = Math.floor(Math.random() * maxColumns);
+			column = Math.floor(rng() * maxColumns);
 
 			possibleStates = states;
 			if (row == 0 || row == (cutRows - 1)) {
@@ -842,11 +845,11 @@ var KnotMaker = (function($) {
 				possibleStates = [NO_CUT, VERT_CUT];
 			}
 
-			newState = possibleStates[Math.floor(Math.random() * possibleStates.length)];
+			newState = possibleStates[Math.floor(rng() * possibleStates.length)];
 
 			randomCuts[row][column] = newState;
 
-			if (Math.random() * (bilateralSymmetry + quadrilateralSymmetry) <= bilateralSymmetry) {
+			if (rng() * (bilateralSymmetry + quadrilateralSymmetry) <= bilateralSymmetry) {
 				//Mirror the new cut onto the other side of the pattern.
 				randomCuts[row][maxColumns - column - 1] = newState;
 			} else {
@@ -867,8 +870,8 @@ var KnotMaker = (function($) {
 		hoverNode = null;
 	}
 
-	function randomizePattern() {
-		cuts = makeBetterRandomPattern(cutRows, cutColumns);
+	function randomizePattern(seed) {
+		cuts = makeBetterRandomPattern(cutRows, cutColumns, seed);
 		selectedNode = null;
 		hoverNode = null;
 	}
@@ -1080,8 +1083,8 @@ var KnotMaker = (function($) {
 			resetPattern();
 			redrawInterface();
 		},
-		randomizePattern : function() {
-			randomizePattern();
+		randomizePattern : function(seed) {
+			randomizePattern(seed);
 			redrawInterface();
 		},
 		setKnotworkSize : function(rows, columns) {
