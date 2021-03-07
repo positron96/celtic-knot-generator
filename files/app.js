@@ -197,7 +197,6 @@ $(document).ready(function() {
 
 	$('#download-image').click(function() {
 		var button = $(this);
-		button.val('Processing...');
 
 		var showUi = $('#show-ui').is(':checked');
 		KnotMaker.showUi(false);
